@@ -1,6 +1,6 @@
 # Static Website Deployment with Nginx
 
-A basic hands-on DevOps project: spin up an Ubuntu server, install Nginx,
+A basic hands-on DevOps project: spin up an Ubuntu server, Provisoin using terraform, install Nginx,
 and deploy a static website to it — validated over the server's public IP.
 
 **Stack:** Ubuntu 22.04 · Nginx · AWS EC2 · SCP
