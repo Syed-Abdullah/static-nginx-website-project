@@ -1,9 +1,9 @@
-# Static Website Deployment with Nginx
+# Static Website Deployment with Nginx and Terraform
 
-A basic hands-on DevOps project: spin up an Ubuntu server, Provisoin using terraform, install Nginx,
+A basic hands-on DevOps project: spin up an Ubuntu server using Terraform, install Nginx,
 and deploy a static website to it — validated over the server's public IP.
 
-**Stack:** Ubuntu 22.04 · Nginx · AWS EC2 · SCP
+**Stack:** Ubuntu 22.04 · Nginx · AWS EC2 · SCP · Terraform
 
 ---
 
