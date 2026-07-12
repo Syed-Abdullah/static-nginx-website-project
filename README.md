@@ -11,7 +11,7 @@ and deploy a static website to it — validated over the server's public IP.
 
 | # | Task | Concept |
 |---|------|---------|
-| 1 | Spin up an Ubuntu EC2 instance | Linux / AWS |
+| 1 | Spin up an Ubuntu EC2 instance (manually or via Terraform) | Linux / AWS / IaC |
 | 2 | SSH in and install Nginx | Linux / Webserver |
 | 3 | Download static HTML site | Web hosting basics |
 | 4 | SCP files to Nginx web root | Secure file transfer |
@@ -22,13 +22,38 @@ and deploy a static website to it — validated over the server's public IP.
 ## Step-by-step walkthrough
 
 ### 1. Spin up an Ubuntu server
-AWS Console → EC2 → Launch Instance:
+
+**Option A — manually, via AWS Console:**
 - AMI: **Ubuntu 22.04 LTS**
 - Instance type: `t2.micro` (free tier eligible)
 - Region: `ap-south-1` (Mumbai) or whatever's closest to you
 - Key pair: create/download a `.pem` key
 - Security Group: allow inbound **22 (SSH), 80 (HTTP)**
 - Allocate and associate an **Elastic IP** so the IP is stable across reboots.
+
+**Option B — via Terraform (see [`terraform/`](terraform/)):**
+```bash
+cd terraform
+
+# create an EC2 key pair first if you don't have one:
+aws ec2 create-key-pair --key-name static-nginx-key --query 'KeyMaterial' --output text > static-nginx-key.pem
+chmod 400 static-nginx-key.pem
+
+cp terraform.tfvars.example terraform.tfvars
+# edit terraform.tfvars: set key_pair_name and my_ip_cidr (get yours with `curl -s ifconfig.me`)
+
+terraform init
+terraform plan
+terraform apply
+```
+This provisions the security group, looks up the latest Ubuntu 22.04 AMI
+dynamically, launches the instance, and attaches an Elastic IP. The IP and a
+ready-to-use SSH command are printed as outputs.
+
+When you're done with the project:
+```bash
+terraform destroy
+```
 
 ### 2. SSH in and install Nginx
 ```bash
@@ -88,7 +113,12 @@ If it doesn't load: check the security group (port 80 open?) and
 ├── site/                 # sample static site to deploy
 │   ├── index.html
 │   └── style.css
-└── scripts/
-    ├── install-nginx.sh
-    └── deploy-site.sh
+├── scripts/
+│   ├── install-nginx.sh
+│   └── deploy-site.sh
+└── terraform/            # optional: provision the EC2 instance via IaC
+    ├── main.tf
+    ├── variables.tf
+    ├── outputs.tf
+    └── terraform.tfvars.example
 ```
